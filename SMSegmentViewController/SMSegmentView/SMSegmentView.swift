@@ -10,6 +10,8 @@ import UIKit
 
 open class SMSegmentView: UIControl {
 
+  public var didSelectedHandler: ((_ oldIndex: Int, _ newIndex: Int, _ oldSeg: SMSegment?, _ newSeg: SMSegment?)->())?
+  
     open var segmentAppearance: SMSegmentAppearance?
 
     // Divider colour & width
@@ -92,7 +94,17 @@ open class SMSegmentView: UIControl {
     // MARK: Select/deselect Segment
     fileprivate func selectSegment(_ segment: SMSegment) {
         segment.setSelected(true)
+      var oldSeg = selectedSegment
+      var newSeg = segment
+      var oldIndex = UISegmentedControlNoSegment
+      if let selectedSegment = selectedSegment {
+        oldIndex = selectedSegment.index
+      }
+      let newIndex = segment.index
         self.selectedSegment = segment
+      if let handler = didSelectedHandler {
+        handler(oldIndex, newIndex, oldSeg, newSeg)
+      }
         self.sendActions(for: .valueChanged)
     }
     fileprivate func deselectSegment() {
@@ -101,25 +113,23 @@ open class SMSegmentView: UIControl {
     }
 
     // MARK: Add Segment
-    open func addSegmentWithTitle(_ title: String?, onSelectionImage: UIImage?, offSelectionImage: UIImage?) {
-        self.insertSegmentWithTitle(title, onSelectionImage: onSelectionImage, offSelectionImage: offSelectionImage, index: self.segments.count)
+  open func addSegmentWithTitle(_ title: String?, onSelectionTitle: String?, onSelectionImage: UIImage?, offSelectionImage: UIImage?) {
+    self.insertSegmentWithTitle(title, onSelectionTitle: onSelectionTitle, onSelectionImage: onSelectionImage, offSelectionImage: offSelectionImage, index: self.segments.count)
     }
 
-    open func insertSegmentWithTitle(_ title: String?, onSelectionImage: UIImage?, offSelectionImage: UIImage?, index: Int) {
+  open func insertSegmentWithTitle(_ title: String?, onSelectionTitle: String?, onSelectionImage: UIImage?, offSelectionImage: UIImage?, index: Int) {
 
         let segment = SMSegment(appearance: self.segmentAppearance)
 
         segment.title = title
+    segment.onSelectionTitle = onSelectionTitle
         segment.onSelectionImage = onSelectionImage
         segment.offSelectionImage = offSelectionImage
         segment.index = index
         segment.didSelectSegment = { [weak self] segment in
-            if self!.selectedSegment != segment {
-                self!.deselectSegment()
-                self!.selectSegment(segment)
-            }
+          self!.selectedSegment?.setSelected(false)
+          self!.selectSegment(segment)
         }
-        segment.setupUIElements()
         
         self.resetSegmentIndicesWithIndex(index, by: 1)
         self.segments.insert(segment, at: index)

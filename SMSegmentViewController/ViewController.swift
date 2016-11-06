@@ -42,12 +42,15 @@ class ViewController: UIViewController {
         self.segmentView.layer.borderWidth = 1.0
 
         // Add segments
-        self.segmentView.addSegmentWithTitle("Clip", onSelectionImage: UIImage(named: "clip_light"), offSelectionImage: UIImage(named: "clip"))
-        self.segmentView.addSegmentWithTitle("Blub", onSelectionImage: UIImage(named: "bulb_light"), offSelectionImage: UIImage(named: "bulb"))
-        self.segmentView.addSegmentWithTitle("Cloud", onSelectionImage: UIImage(named: "cloud_light"), offSelectionImage: UIImage(named: "cloud"))
-        
-        self.segmentView.addTarget(self, action: #selector(selectSegmentInSegmentView(segmentView:)), for: .valueChanged)
-        
+      self.segmentView.addSegmentWithTitle("Clip", onSelectionTitle: "Clip1", onSelectionImage: UIImage(named: "clip_light"), offSelectionImage: UIImage(named: "clip"))
+        self.segmentView.addSegmentWithTitle("Blub", onSelectionTitle: "Blub1", onSelectionImage: UIImage(named: "bulb_light"), offSelectionImage: UIImage(named: "bulb"))
+        self.segmentView.addSegmentWithTitle("Cloud", onSelectionTitle: "Cloud1", onSelectionImage: UIImage(named: "cloud_light"), offSelectionImage: UIImage(named: "cloud"))
+      
+      self.segmentView.didSelectedHandler = {
+        [weak self] (oldIndex, newIndex, oldSeg, newSeg) in
+        print("old == \(oldIndex), new == \(newIndex))")
+      }
+      
         // Set segment with index 0 as selected by default
         self.segmentView.selectedSegmentIndex = 0
         self.view.addSubview(self.segmentView)
