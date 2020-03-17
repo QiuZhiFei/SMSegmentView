@@ -18,6 +18,8 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = "7.0"
 
+  s.swift_versions = ['5.0']
+
   s.source       = { :git => "https://github.com/allenbryan11/SMSegmentView.git", :branch => "master" }
 
 
